@@ -56,17 +56,6 @@
             color: black;
             transform: scale(1.1);
         }
-        .heart {
-            font-size: 50px;
-            cursor: pointer;
-            animation: pulse 1s infinite;
-            user-select: none;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
         .raining-hearts {
             position: absolute;
             font-size: 40px;
@@ -125,60 +114,66 @@
     </div>
 
     <script>
-        function nextStep(correct) {
-            document.getElementById("questionBox").style.display = "none";
-            if (correct) {
-                document.getElementById("heartBox").style.display = "block";
-            } else {
-                document.getElementById("retryBox").style.display = "block";
-            }
+    function nextStep(correct) {
+        document.getElementById("questionBox").style.display = "none";
+        if (correct) {
+            document.getElementById("heartBox").style.display = "block";
+        } else {
+            document.getElementById("retryBox").style.display = "block";
         }
+    }
 
-        function retryQuestion() {
-            document.getElementById("retryBox").style.display = "none";
-            document.getElementById("questionBox").style.display = "block";
+    function retryQuestion() {
+        document.getElementById("retryBox").style.display = "none";
+        document.getElementById("questionBox").style.display = "block";
+    }
+
+    let heart = document.getElementById("heart");
+    let holdTimer;
+
+    function startHold() {
+        holdTimer = setTimeout(() => {
+            document.getElementById("heartBox").style.display = "none";
+            document.getElementById("askOutBox").style.display = "block";
+            createHeartExplosion();
+        }, 1500);
+    }
+
+    function cancelHold() {
+        clearTimeout(holdTimer);
+    }
+
+    heart.addEventListener("mousedown", startHold);
+    heart.addEventListener("mouseup", cancelHold);
+    heart.addEventListener("mouseleave", cancelHold);
+    heart.addEventListener("touchstart", startHold);
+    heart.addEventListener("touchend", cancelHold);
+
+    function createHeartExplosion() {
+        for (let i = 0; i < 50; i++) {
+            let heart = document.createElement("div");
+            heart.className = "raining-hearts";
+            heart.innerHTML = "🤍";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = Math.random() * 100 + "vh";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 2000);
         }
+    }
 
-        let heart = document.getElementById("heart");
-        let holdTimer;
+    let noBtn = document.getElementById("runawayBtn");
+    noBtn.addEventListener("mouseover", function () {
+        let x = Math.random() * (window.innerWidth - noBtn.clientWidth);
+        let y = Math.random() * (window.innerHeight - noBtn.clientHeight);
+        noBtn.style.position = "absolute";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+    });
 
-        heart.addEventListener("mousedown", function() {
-            holdTimer = setTimeout(() => {
-                document.getElementById("heartBox").style.display = "none";
-                document.getElementById("askOutBox").style.display = "block";
-                createHeartExplosion();
-            }, 1500);
-        });
-
-        heart.addEventListener("mouseup", function() {
-            clearTimeout(holdTimer);
-        });
-
-        function createHeartExplosion() {
-            for (let i = 0; i < 50; i++) {
-                let heart = document.createElement("div");
-                heart.className = "raining-hearts";
-                heart.innerHTML = "🤍";
-                heart.style.left = Math.random() * 100 + "vw";
-                heart.style.top = Math.random() * 100 + "vh";
-                document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 2000);
-            }
+    function showFinalPopup() {
+        document.getElementById("askOutBox").style.display = "none";
+        document.getElementById("finalPopup").style.display = "block";
         }
-
-        let noBtn = document.getElementById("runawayBtn");
-        noBtn.addEventListener("mouseover", function() {
-            let x = Math.random() * (window.innerWidth - noBtn.clientWidth);
-            let y = Math.random() * (window.innerHeight - noBtn.clientHeight);
-            noBtn.style.position = "absolute";
-            noBtn.style.left = x + "px";
-            noBtn.style.top = y + "px";
-        });
-
-        function showFinalPopup() {
-            document.getElementById("askOutBox").style.display = "none";
-            document.getElementById("finalPopup").style.display = "block";
-        }
-    </script>
+</script>
 </body>
 </html>
